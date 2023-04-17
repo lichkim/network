@@ -127,11 +127,18 @@ void http_handler(int asock) {
     char header[BUF_SIZE];
     char buf[BUF_SIZE];
 
-    if (read(asock, buf, BUF_SIZE) < 0) {   //read 실패
+    if (read(asock, buf, BUF_SIZE) < 0) {   //read 실패. read함수 자체는 호출되므로 buf에 request message는 read의 성공 여부와 관계없이 저장된다.
         perror("[ERR] Failed to read request.\n");
         handle_500(asock);
         return;
     }
+
+    //브라우저에서 보낸 http request message를 콘솔에 출력하기 위한 부분
+    printf("\n====================\n");
+    printf("Requested HTTP message\n");
+    printf("====================\n");
+    printf("\n%s\n", buf);
+    printf("\n====================\n");
 
     char* method = strtok(buf, " ");    //string을 공백(공백을 인자로 줬기 때문)을 기준으로 자른다.(str tokenize)
     char* uri = strtok(NULL, " ");      //인자에 NULL 값을 주면 잘려진 부분 이후로 다시 자르기 시작한다. strtok가 static 변수를 가지고 있어서 잘려진 위치의 포인터를 기억하기 때문.
